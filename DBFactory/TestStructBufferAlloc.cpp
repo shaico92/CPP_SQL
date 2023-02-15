@@ -1,9 +1,7 @@
 ﻿// TestStructBufferAlloc.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-#include <set>
-#include <map>
+#include "Dependencies.h"
 #include "SQLFieldBuffer.h"
 #include "SQLDerived.h"
 #include "SQLFactory.h"
@@ -25,25 +23,34 @@ int main()
     factory.RegisterClass(t);
     // 
     factory.CreateTable(t);
-
+    SQL_order_map<StructExample> data;
+    factory.GetTable(t, data);
+    SQL_order_map<StructExample>::iterator  data1 = data.begin();
+    data1->second.id = -666;
+    cout << factory.InsertObject(t->ToSQLUpdate(data1->second, data1->first));
     StructExample tempo;
-    tempo.age = 22.32;
-    tempo.id = 2211;
-    tempo.year = 1994;
-    memcpy_s(tempo.name, 23, "mash", 23);
+    for (size_t i = 0; i < 20; i++)
+    {
+        tempo.age = 22.32+0.1321+i;
+        tempo.id = i;
+        tempo.year = 1994+i;
+        memcpy_s(tempo.name, 23, "mash", 23);
+        cout << factory.InsertObject(t->ToSQLInsert(tempo));
+    }
+  
 
 
     
 
-    cout << factory.InsertObject(t->ToSQLInsert(tempo));
+    //cout << factory.InsertObject(t->ToSQLInsert(tempo));
 
-    map<size_t,StructExample> data;
+
     factory.GetTable( t,data);
 
-    map<size_t, StructExample>::iterator  datad= data.end();
+    SQL_order_map<StructExample>::iterator  datad= data.end();
     datad--;
     datad->second.age = 123;
-    cout<<factory.InsertObject(t->ToSQLUpdate(datad->second, datad->first));
+   // cout<<factory.InsertObject(t->ToSQLUpdate(datad->second, datad->first));
 
 
    

@@ -57,14 +57,19 @@ public:
 	
 
 	template<class t>
-	int GetTable( SQLObject* sqlClass ,map<size_t,t>& data) {
+	int GetTable( SQLObject* sqlClass , unordered_map<size_t,t>& data) {
 	;
 	int rows = 0, columns = 0;
 	size_t rowIndex = 1;
 		char** results;
-		string sql = "SELECT * FROM "; //+GetName() + "(column_name datatype, column_name datatype);"
+		string sql = "SELECT ROWID,* FROM "; //+GetName() + "(column_name datatype, column_name datatype);"
 		sql.append(sqlClass->GetName());
+		sql.append(" ORDER BY id DESC ;");
 		int rc = sqlite3_get_table(db, sql.c_str(), &results, &rows, &columns, &zErrMsg);
+		if (rows<1)
+		{
+			return 0;
+		}
 		std::map<std::string, SQLField*>::iterator it;
 		std::map<std::string, SQLField*> map= sqlClass->GetFields()->GetFields();
 		char* buffer = NULL;
@@ -72,28 +77,37 @@ public:
 		size_t i = columns;
 		size_t indexLocation = 0;
 		it = map.begin();
-		
+		size_t row = 0;
 
 
-		while (i<(rows+1)*columns)
+		while (i<(rows+1)*(columns))
 		{
+			if (i%(columns)==0)
+			{
+
+				
+				row=	stoi(results[i]);
+				it = map.begin();
+				++i;
+				continue;
+			}
 			StringToBuffer(it->second, buffer, results[i]);
 			
 			++i;
 			++it;
 			++indexLocation;
-			if (indexLocation>= columns)
+			if (indexLocation>= (columns-1))
 			{
 				t object_;
 				memcpy_s(&object_, sqlClass->GetFields()->GetBufferSize(), buffer, sqlClass->GetFields()->GetBufferSize());
 				delete buffer;
 				buffer = NULL;
 				buffer = new	char[sqlClass->GetFields()->GetBufferSize()];
-				data[rowIndex]=(object_);
+				data[row]=(object_);
 				
-				++rowIndex;
+				
 				indexLocation = 0;
-				it = map.begin();
+				
 
 
 			}
