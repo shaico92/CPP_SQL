@@ -39,7 +39,13 @@ int main()
     //cout << factory.InsertObject(t->ToSQLInsert(tempo));
 
     SQL_order_map<StructExample>::iterator  OBJECT;
-    factory.GetTable( t,data);
+
+    for (size_t i = 0; i < 200; i++)
+    {
+        factory.GetTable(t, data);
+    }
+
+
     OBJECT=data.find(7);
     OBJECT->second.age = -666;
     OBJECT->second.id = -666;
@@ -48,10 +54,11 @@ int main()
     vec.push_back(p);
     p = make_pair(8, data.find(9)->second);
     vec.push_back(p);
+    
     cout << factory.InsertObject(t->UpdateRange(vec));
     cout<<factory.InsertObject(t->Update(OBJECT->second, OBJECT->first));
 
-    factory.GetTable(t, data);
+    //factory.GetTable(t, data);
    
 
 }

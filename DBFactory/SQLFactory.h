@@ -13,13 +13,9 @@ class  SQLFactory
 	char* zErrMsg = 0;
 	std::map<std::string, SQLObject*> registered;
 	void StringToBuffer(SQLField* ptr, char* buffer, char* value);
-	int Execute(SQLObject* obj
-		, int& rows
-		, int& columns
-		, char**& res
-		, char*& buffer
-		, std::unordered_map<std::string, SQLField*>::iterator& it
-		, std::unordered_map<std::string, SQLField*>& map);
+	int Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size);
+	void open();
+	void close();
 public:
 	SQLFactory(std::string dbpath);
 	~SQLFactory();
@@ -27,79 +23,42 @@ public:
 	int CreateTable(SQLObject* sqlClass);
 	
 	
-
-	
 	template<class t>
-	int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data);
+	int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data); 
+	
+
+
 	int InsertObject(const std::string& Query);
 	int InsertObject(const vector<std::string>& Queries);
 	int DropTable(const SQLObject* obj);
 };
 
 //template implementation
-
 template<class t>
 int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data) {
 	;
-	int rows = 0, columns = 0;
-	size_t rowIndex = 1;
-	char** results=NULL;
-	std::unordered_map<std::string, SQLField*>::iterator it;
-	std::unordered_map<std::string, SQLField*> map;
-	char* buffer = NULL;
-	int rc= Execute(sqlClass, rows, columns, results,buffer,it,map);
-	if (rc!=0)
+
+	unordered_map<size_t, char*>mems;
+	unordered_map<size_t, char*>::iterator itMems;
+	size_t Size = 0;
+	int rc = Execute(sqlClass, mems, Size);
+	for (itMems = mems.begin(); itMems != mems.end(); itMems++)
 	{
-		return rc;
-	}
-
-
-
-
-
-	size_t i = columns;
-	size_t indexLocation = 0;
-	size_t row = 0;
-
-	while (i < (rows + 1) * (columns))
-	{
-		if (i % (columns) == 0)
-		{
-
-
-			row = stoi(results[i]);
-			it = map.begin();
-			++i;
-			continue;
-		}
-		StringToBuffer(it->second, buffer, results[i]);
-
-		++i;
-		++it;
-		++indexLocation;
-		if (indexLocation >= (columns - 1))
-		{
-			t object_;
-			memcpy_s(&object_, sqlClass->GetFields()->GetBufferSize(), buffer, sqlClass->GetFields()->GetBufferSize());
-			delete buffer;
-			buffer = NULL;
-			buffer = new	char[sqlClass->GetFields()->GetBufferSize()];
-			data[row] = (object_);
-
-
-			indexLocation = 0;
-
-
-
-		}
+		t* obj = (t*)itMems->second;
+		data[itMems->first] = *obj;
+		
+	
+		delete[] (itMems->second);
+	
+		itMems->second = NULL;
 
 	}
 
-
-
+	//in case of memory leak use this 
+	//close();
+	//open();
+	mems.clear();
 
 	return rc;
 }
-
-
 

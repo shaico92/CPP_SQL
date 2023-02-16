@@ -7,7 +7,22 @@ SQLFactory::SQLFactory(std::string dbpath) {
 	data = "Callback function called";
 }
 
+void SQLFactory::open() {
+	if (db==NULL)
+	{
+		int res = sqlite3_open(dbPath.c_str(), &db);
+		data = "Callback function called";
+	}
 
+}
+void SQLFactory::close() {
+	if (db != NULL)
+	{
+		sqlite3_close(db);
+		db = NULL;
+	}
+
+}
 void SQLFactory::StringToBuffer(SQLField* ptr, char* buffer, char* value) {
 	switch (ptr->type)
 	{
@@ -53,11 +68,13 @@ void SQLFactory::RegisterClass(SQLObject* ptr) {
 
 }
 int SQLFactory::InsertObject(const std::string& Query) {
+	open();
 	int rc=  sqlite3_exec(db, Query.c_str(), NULL, 0, &zErrMsg);
 
 	return rc;
 }
 int SQLFactory::InsertObject(const vector<std::string>& Queries) {
+	open();
 	string query = "";
 	for (size_t i = 0; i < Queries.size(); i++)
 	{
@@ -69,7 +86,7 @@ int SQLFactory::InsertObject(const vector<std::string>& Queries) {
 }
 
 int SQLFactory::CreateTable(SQLObject* ptr) {
-
+	open();
 	std::unordered_map<std::string, SQLField*> fields= ptr->GetFields()->GetFields();
 	std::unordered_map<std::string, SQLField*>::iterator fieldsIt;
 	string sqlCreate = "CREATE TABLE IF NOT EXISTS "; //+GetName() + "(column_name datatype, column_name datatype);"
@@ -100,39 +117,93 @@ int SQLFactory::CreateTable(SQLObject* ptr) {
 
 
 int SQLFactory::DropTable(const SQLObject* obj) {
+	open();
 	string sql = "DROP TABLE ";
 	sql.append(obj->GetName());
 
 	return sqlite3_exec(db, sql.c_str(), NULL, 0, &zErrMsg);
 }
-int SQLFactory::Execute(SQLObject* obj
-	, int& rows
-	, int& columns
-	, char**& res
-	, char*& buffer
-	, std::unordered_map<std::string, SQLField*>::iterator& it
-	, std::unordered_map<std::string, SQLField*>& map) {
-	
+
+
+int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size) {
+
+	int rows = 0, columns = 0;
 	size_t rowIndex = 1;
-	
+	char** results = NULL;
+	std::unordered_map<std::string, SQLField*>::iterator it;
+	std::unordered_map<std::string, SQLField*> map;
+	char* buffer = NULL;
+
+
+
+
 	string sql = "SELECT ROWID,* FROM "; //+GetName() + "(column_name datatype, column_name datatype);"
 	sql.append(obj->GetName());
 	//sql.append(" ORDER BY id ASC, age DESC;");
-	int rc = sqlite3_get_table(db, sql.c_str(), &res, &rows, &columns, &zErrMsg);
+	int rc = sqlite3_get_table(db, sql.c_str(), &results, &rows, &columns, &zErrMsg);
 	if (rows < 1 || rc != 0)
 	{
 		return 0;
 	}
-	
-	 map = obj->GetFields()->GetFields();
+
+	map = obj->GetFields()->GetFields();
 
 	buffer = new	char[obj->GetFields()->GetBufferSize()];
-	
-	
-	it = map.begin();
+	size = obj->GetFields()->GetBufferSize();
 	
 
 
+	size_t i = columns;
+	size_t indexLocation = 0;
+	size_t row = 0;
+
+	while (i < (rows + 1) * (columns))
+	{
+		if (i % (columns) == 0)
+		{
+
+
+			row = stoi(results[i]);
+			it = map.begin();
+			++i;
+			continue;
+		}
+		StringToBuffer(it->second, buffer, results[i]);
+
+		++i;
+		++it;
+		++indexLocation;
+		if (indexLocation >= (columns - 1))
+		{
+			char* mem = NULL;
+			 mem = new char[obj->GetFields()->GetBufferSize()];
+			memcpy_s(mem, obj->GetFields()->GetBufferSize(), buffer, obj->GetFields()->GetBufferSize());
+			delete[obj->GetFields()->GetBufferSize()] buffer;
+			buffer = NULL;
+			buffer = new	char[obj->GetFields()->GetBufferSize()];
+			data[row] = (mem);
+
+
+			indexLocation = 0;
+
+
+
+		}
+
+	}
+
+
+	for (size_t i = 0; i < (rows + 1) * (columns); i++)
+	{
+		delete  results[i];
+		results[i] = NULL;
+	}
+
+	delete[obj->GetFields()->GetBufferSize()]  buffer;
+
+	buffer = NULL;
+	results = NULL;
 
 	return rc;
 }
+
