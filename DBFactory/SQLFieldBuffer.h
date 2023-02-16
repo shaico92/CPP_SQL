@@ -11,11 +11,11 @@ class SQLFields
 	friend class SQLObject;
 
 public:
-	std::map<std::string, SQLField*>& GetFields() { return this->fields; }
+	std::unordered_map<std::string, SQLField*>& GetFields() { return this->fields; }
 	unsigned int GetBufferSize() { return this->bufferSize; }
 private:
 	unsigned int bufferSize;
-	std::map<std::string, SQLField*> fields;
+	unordered_map<std::string, SQLField*> fields;
 	
 	
 	void addFieldString(std::string fieldName,int size);
@@ -30,7 +30,7 @@ private:
 	template<class t>
 	string ToSQLInsert(t obj,string Table) {
 		
-		std::map<std::string, SQLField*>::iterator it;
+		std::unordered_map<std::string, SQLField*>::iterator it;
 		char* buff = new		char[bufferSize];
 		memcpy_s(buff, bufferSize, &obj, bufferSize);
 		string Query = "INSERT INTO ";
@@ -87,9 +87,9 @@ private:
 		Query.append(" SET ");
 		char* buff = new		char[bufferSize];
 		memcpy_s(buff, bufferSize, &obj, bufferSize);
-		std::map<std::string, SQLField*> fields = GetFields();
+		std::unordered_map<std::string, SQLField*> fields = GetFields();
 		vector<string> values;
-		for (std::map<std::string, SQLField*>::iterator it = fields.begin(); it != fields.end(); it++)
+		for (std::unordered_map<std::string, SQLField*>::iterator it = fields.begin(); it != fields.end(); it++)
 		{
 			//iterate each field
 			Query.append(it->second->fieldName);

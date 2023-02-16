@@ -70,8 +70,8 @@ int SQLFactory::InsertObject(const vector<std::string>& Queries) {
 
 int SQLFactory::CreateTable(SQLObject* ptr) {
 
-	std::map<std::string, SQLField*> fields= ptr->GetFields()->GetFields();
-	std::map<std::string, SQLField*>::iterator fieldsIt;
+	std::unordered_map<std::string, SQLField*> fields= ptr->GetFields()->GetFields();
+	std::unordered_map<std::string, SQLField*>::iterator fieldsIt;
 	string sqlCreate = "CREATE TABLE IF NOT EXISTS "; //+GetName() + "(column_name datatype, column_name datatype);"
 	sqlCreate.append(ptr->GetName());
 	sqlCreate.append(" (");
@@ -110,8 +110,8 @@ int SQLFactory::Execute(SQLObject* obj
 	, int& columns
 	, char**& res
 	, char*& buffer
-	, std::map<std::string, SQLField*>::iterator& it
-	, std::map<std::string, SQLField*>& map) {
+	, std::unordered_map<std::string, SQLField*>::iterator& it
+	, std::unordered_map<std::string, SQLField*>& map) {
 	
 	size_t rowIndex = 1;
 	

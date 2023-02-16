@@ -18,8 +18,8 @@ class  SQLFactory
 		, int& columns
 		, char**& res
 		, char*& buffer
-		, std::map<std::string, SQLField*>::iterator& it
-		, std::map<std::string, SQLField*>& map);
+		, std::unordered_map<std::string, SQLField*>::iterator& it
+		, std::unordered_map<std::string, SQLField*>& map);
 public:
 	SQLFactory(std::string dbpath);
 	~SQLFactory();
@@ -44,8 +44,8 @@ int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data) {
 	int rows = 0, columns = 0;
 	size_t rowIndex = 1;
 	char** results=NULL;
-	std::map<std::string, SQLField*>::iterator it;
-	std::map<std::string, SQLField*> map;
+	std::unordered_map<std::string, SQLField*>::iterator it;
+	std::unordered_map<std::string, SQLField*> map;
 	char* buffer = NULL;
 	int rc= Execute(sqlClass, rows, columns, results,buffer,it,map);
 	if (rc!=0)
