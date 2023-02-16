@@ -1,4 +1,6 @@
 #include "SQLObject.h"
+
+
 void SQLObject::addFieldString(std::string fieldName, int size) {
 	std::string NameForSQL = fieldName;
 	for (size_t i = 0; i < fieldName.length(); i++)

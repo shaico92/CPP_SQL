@@ -1,6 +1,6 @@
 #pragma once
 #include "SQLFieldBuffer.h"
-#include <iostream>
+
 class SQLObject
 {
 	
@@ -19,15 +19,45 @@ protected:
 	SQLObject(std::string tableName);
 	SQLFields* sqlFields;
 public:
-	std::string GetName() { return this->TableName; }
+	 std::string GetName()const { return this->TableName; }
 	SQLFields* GetFields() { return this->sqlFields; }
 	template<class t>
-	string ToSQLInsert(t obj) {
+	string Insert(t obj) {
 	return	sqlFields->ToSQLInsert( obj,this->TableName);
 	}
 	template<class t>
-	string ToSQLUpdate(t obj,size_t row) {
+	vector<string> Insert(vector<t> objects) {
+		vector<string> vec;
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+			vec.push_back(sqlFields->ToSQLInsert(objects.at(i), this->TableName));
+		}
+		return vec;
+	}
+	template<class t>
+	string Update(t obj,size_t row) {
 		return	sqlFields->UpdateRow(this->TableName,row,obj);
 	}
+	template<class t>
+	vector<string> UpdateRange(vector<pair<size_t,t>> objects) {
+
+		
+		vector<string>queries;
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+
+			const pair<size_t, t> current = objects[i];
+		 string query=	sqlFields->UpdateRow(this->TableName, current.first, current.second);
+		 queries.push_back(query);
+		 
+			
+		}
+
+
+		return	queries;
+			//
+	}
+
+
 };
 
