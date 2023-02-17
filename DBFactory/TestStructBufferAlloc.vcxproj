@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClCompile Include="..\external\shell.c" />
     <ClCompile Include="..\external\sqlite3.c" />
+    <ClCompile Include="Filter.cpp" />
     <ClCompile Include="SQLDerived.cpp" />
     <ClCompile Include="SQLFactory.cpp" />
     <ClCompile Include="SQLField.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="..\external\sqlite3ext.h" />
     <ClInclude Include="Dependencies.h" />
     <ClInclude Include="FieldTypes.h" />
+    <ClInclude Include="Filter.h" />
     <ClInclude Include="SQLDerived.h" />
     <ClInclude Include="SQLFactory.h" />
     <ClInclude Include="SQLField.h" />

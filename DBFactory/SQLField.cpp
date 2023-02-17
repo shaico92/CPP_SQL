@@ -5,7 +5,7 @@ SQLField::SQLField(FieldType type, int bufferOffeset, std::string name, int size
 	this->fieldName = name;
 	this->size = size;
 }
-string SQLField::TypeToSql() {
+string SQLField::TypeToSql() const{
 
 	switch (this->type)
 	{

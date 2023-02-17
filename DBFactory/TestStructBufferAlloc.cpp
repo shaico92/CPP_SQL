@@ -25,6 +25,9 @@ int main()
     factory.DropTable(t);
     // 
     factory.CreateTable(t);
+    SQLField* field;
+    t->GetField("year",field);
+
     SQL_order_map<StructExample> data;
   //  factory.GetTable(t, data);
    // SQL_order_map<StructExample>::iterator  data1 = data.begin();
@@ -40,23 +43,28 @@ int main()
 
     SQL_order_map<StructExample>::iterator  OBJECT;
 
+    Filter filter(field, Expression::_bigEq, 2002);
+    Filter filter2(field, Expression::_smallEq, 2016);
+    vector<Filter> filters;
+    filters.push_back(filter);
+    filters.push_back(filter2);
     for (size_t i = 0; i < 200; i++)
     {
-        factory.GetTable(t, data);
+        factory.GetTable(t, data, filters);
     }
 
 
-    OBJECT=data.find(7);
-    OBJECT->second.age = -666;
-    OBJECT->second.id = -666;
-    vector <pair< size_t,StructExample >>vec;
-    auto p = make_pair(7, data.find(8)->second);
-    vec.push_back(p);
-    p = make_pair(8, data.find(9)->second);
-    vec.push_back(p);
-    
-    cout << factory.InsertObject(t->UpdateRange(vec));
-    cout<<factory.InsertObject(t->Update(OBJECT->second, OBJECT->first));
+    //OBJECT=data.find(7);
+    //OBJECT->second.age = -666;
+    //OBJECT->second.id = -666;
+    //vector <pair< size_t,StructExample >>vec;
+    //auto p = make_pair(7, data.find(8)->second);
+    //vec.push_back(p);
+    //p = make_pair(8, data.find(9)->second);
+    //vec.push_back(p);
+    //
+    //cout << factory.InsertObject(t->UpdateRange(vec));
+    //cout<<factory.InsertObject(t->Update(OBJECT->second, OBJECT->first));
 
     //factory.GetTable(t, data);
    

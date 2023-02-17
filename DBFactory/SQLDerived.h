@@ -18,7 +18,7 @@ class SQLDerived :
     }
 public:
     SQLDerived(std::string  name) :SQLObject(name) {
-        
+ 
         RegisterFields();
     }
 };

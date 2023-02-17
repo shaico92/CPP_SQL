@@ -37,10 +37,11 @@ void SQLFields::addFieldlongDouble(std::string fieldName, long double obj) {
 	fields[fieldName] = new SQLField(FieldType::_longDouble, bufferSize, fieldName, sizeof(obj));
 	bufferSize += sizeof(obj);
 }
-std::string SQLFields::BufferValue(SQLField* ptr, char* data) {
+std::string SQLFields::BufferValue(const SQLField* ptr, char* data) {
 	switch (ptr->type)
 	{
-	case _int_: {
+	case _int_:
+	{
 		int d = 0;
 		memcpy_s(&d, ptr->size, data, ptr->size);
 

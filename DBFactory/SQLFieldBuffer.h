@@ -9,7 +9,7 @@ class SQLFields
 {
 
 	friend class SQLObject;
-
+	friend class Filter;
 public:
 	std::unordered_map<std::string, SQLField*>& GetFields() { return this->fields; }
 	unsigned int GetBufferSize() { return this->bufferSize; }
@@ -121,6 +121,6 @@ private:
 		Query.append(";");
 		return Query;
 	}
-	std::string BufferValue(SQLField* ptr, char* data);
+static	std::string BufferValue(const SQLField* ptr, char* data);
 };
 

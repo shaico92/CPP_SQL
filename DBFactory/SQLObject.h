@@ -4,7 +4,7 @@
 class SQLObject
 {
 	
-	
+	friend class SQLFactory;
 	std::string TableName;
 	virtual void RegisterFields() = 0;
 protected:
@@ -17,10 +17,12 @@ protected:
 	void addFieldlonglong(std::string fieldName, long long obj);
 	void addFieldlongDouble(std::string fieldName, long double obj);
 	SQLObject(std::string tableName);
+	SQLFields* GetFields() { return this->sqlFields; }
 	SQLFields* sqlFields;
 public:
+	bool GetField(const char* fieldName, SQLField*& ptr);
 	 std::string GetName()const { return this->TableName; }
-	SQLFields* GetFields() { return this->sqlFields; }
+
 	template<class t>
 	string Insert(t obj) {
 	return	sqlFields->ToSQLInsert( obj,this->TableName);
