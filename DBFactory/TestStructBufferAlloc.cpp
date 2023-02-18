@@ -57,13 +57,13 @@ int main()
     //OBJECT=data.find(7);
     //OBJECT->second.age = -666;
     //OBJECT->second.id = -666;
-    //vector <pair< size_t,StructExample >>vec;
+    vector <pair< size_t,StructExample >>vec;
     //auto p = make_pair(7, data.find(8)->second);
     //vec.push_back(p);
     //p = make_pair(8, data.find(9)->second);
     //vec.push_back(p);
     //
-    //cout << factory.InsertObject(t->UpdateRange(vec));
+    cout << factory.InsertObject(t->UpdateRange(vec));
     //cout<<factory.InsertObject(t->Update(OBJECT->second, OBJECT->first));
 
     //factory.GetTable(t, data);

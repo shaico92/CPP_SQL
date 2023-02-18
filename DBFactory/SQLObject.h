@@ -1,22 +1,22 @@
 #pragma once
 #include "SQLFieldBuffer.h"
 
-class SQLObject
+SQLFACTORY_API class SQLObject
 {
 	
 	friend class SQLFactory;
 	std::string TableName;
 	virtual void RegisterFields() = 0;
 protected:
-	void addFieldString(std::string fieldName, int size);
-	void addFieldWString(std::string fieldName, std::wstring obj);
-	void addFieldInt(std::string fieldName, int obj);
-	void addFieldDouble(std::string fieldName, double obj);
-	void addFieldFloat(std::string fieldName, float obj);
-	void addFieldlong(std::string fieldName, long obj);
-	void addFieldlonglong(std::string fieldName, long long obj);
-	void addFieldlongDouble(std::string fieldName, long double obj);
-	SQLObject(std::string tableName);
+	SQLFACTORY_API void addFieldString(std::string fieldName, int size);
+	SQLFACTORY_API void addFieldWString(std::string fieldName, std::wstring obj);
+	SQLFACTORY_API void addFieldInt(std::string fieldName, int obj);
+	SQLFACTORY_API void addFieldDouble(std::string fieldName, double obj);
+	SQLFACTORY_API void addFieldFloat(std::string fieldName, float obj);
+	SQLFACTORY_API void addFieldlong(std::string fieldName, long obj);
+	SQLFACTORY_API void addFieldlonglong(std::string fieldName, long long obj);
+	SQLFACTORY_API void addFieldlongDouble(std::string fieldName, long double obj);
+	SQLFACTORY_API SQLObject(std::string tableName);
 	SQLFields* GetFields() { return this->sqlFields; }
 	SQLFields* sqlFields;
 public:

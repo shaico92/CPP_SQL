@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{6bb7ca51-e384-4e33-a3fe-c67f6c1465f1}</ProjectGuid>
-    <RootNamespace>TestStructBufferAlloc</RootNamespace>
+    <ProjectGuid>{391eec90-33aa-4185-a289-9dcb192e8765}</ProjectGuid>
+    <RootNamespace>Tester</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>DBFactory</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -41,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -115,12 +114,15 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;SQLFACTORY_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)DBFactory</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DBFactory.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,28 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\external\shell.c" />
-    <ClCompile Include="..\external\sqlite3.c" />
-    <ClCompile Include="Filter.cpp" />
-    <ClCompile Include="SQLDerived.cpp" />
-    <ClCompile Include="SQLFactory.cpp" />
-    <ClCompile Include="SQLField.cpp" />
-    <ClCompile Include="SQLFieldBuffer.cpp" />
-    <ClCompile Include="SQLObject.cpp" />
-    <ClCompile Include="TestStructBufferAlloc.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\external\sqlite3.h" />
-    <ClInclude Include="..\external\sqlite3ext.h" />
-    <ClInclude Include="Dependencies.h" />
-    <ClInclude Include="FieldTypes.h" />
-    <ClInclude Include="Filter.h" />
-    <ClInclude Include="SQLDerived.h" />
-    <ClInclude Include="SQLFactory.h" />
-    <ClInclude Include="SQLField.h" />
-    <ClInclude Include="SQLFieldBuffer.h" />
-    <ClInclude Include="SQLObject.h" />
-    <ClInclude Include="StructExample.h" />
+    <ClCompile Include="Tester.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

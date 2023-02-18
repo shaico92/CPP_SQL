@@ -51,7 +51,19 @@ void SQLObject::addFieldlongDouble(std::string fieldName, long double obj) {
 }
 
 SQLObject::SQLObject(std::string tableName) {
-	this->TableName = tableName;
+	std::string NameForSQL = tableName;
+	for (size_t i = 0; i < tableName.length(); i++)
+	{
+		if (tableName[i] == ' ')
+		{
+			NameForSQL = "";
+			NameForSQL.append("[");
+			NameForSQL.append(tableName);
+			NameForSQL.append("]");
+			break;
+		}
+	}
+	this->TableName = NameForSQL;
 	if (this->sqlFields == NULL)
 	{
 		this->sqlFields = new	SQLFields();

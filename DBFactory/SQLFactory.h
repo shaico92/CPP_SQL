@@ -4,7 +4,9 @@
 #include "../external/sqlite3.h"
 #include "Filter.h"
 
-class  SQLFactory
+
+
+extern "C++" SQLFACTORY_API class  SQLFactory
 {
 
 	
@@ -19,26 +21,26 @@ class  SQLFactory
 	void open();
 	void close();
 public:
-	SQLFactory(std::string dbpath);
-	~SQLFactory();
-	void RegisterClass(SQLObject* sqlClass);
-	int CreateTable(SQLObject* sqlClass);
+	SQLFACTORY_API SQLFactory(std::string dbpath);
+	SQLFACTORY_API	~SQLFactory();
+	SQLFACTORY_API	void RegisterClass(SQLObject* sqlClass);
+	SQLFACTORY_API	int CreateTable(SQLObject* sqlClass);
 	
 	
 	template<class t>
-	int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter);
+		int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter);
 	template<class t>
-	int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter> & filter);
+		int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter> & filter);
 
 
-	int InsertObject(const std::string& Query);
-	int InsertObject(const vector<std::string>& Queries);
-	int DropTable(const SQLObject* obj);
+	SQLFACTORY_API		int InsertObject(const std::string& Query);
+	SQLFACTORY_API	int InsertObject(const vector<std::string>& Queries);
+	SQLFACTORY_API	int DropTable(const SQLObject* obj);
 };
 
 //template implementation
 template<class t>
-int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter) {
+ int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter) {
 	;
 	
 	unordered_map<size_t, char*>mems;
@@ -66,7 +68,7 @@ int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,con
 	return rc;
 }
 template<class t>
-int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter>& filter) {
+ int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter>& filter) {
 	;
 	
 	unordered_map<size_t, char*>mems;

@@ -5,7 +5,7 @@
 
 
 
-class SQLFields
+SQLFACTORY_API class SQLFields
 {
 
 	friend class SQLObject;
@@ -121,6 +121,6 @@ private:
 		Query.append(";");
 		return Query;
 	}
-static	std::string BufferValue(const SQLField* ptr, char* data);
+SQLFACTORY_API static	std::string BufferValue(const SQLField* ptr, char* data);
 };
 
