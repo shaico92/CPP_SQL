@@ -125,6 +125,90 @@ int SQLFactory::DropTable(const SQLObject* obj) {
 }
 
 
+
+int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size) 
+{
+
+	int rows = 0, columns = 0;
+	size_t rowIndex = 1;
+	char** results = NULL;
+	std::unordered_map<std::string, SQLField*>::iterator it;
+	std::unordered_map<std::string, SQLField*> map;
+	char* buffer = NULL;
+
+
+
+
+	string sql = "SELECT ROWID,* FROM "; //+GetName() + "(column_name datatype, column_name datatype);"
+	sql.append(obj->GetName());
+
+	int rc = sqlite3_get_table(db, sql.c_str(), &results, &rows, &columns, &zErrMsg);
+	if (rows < 1 || rc != 0)
+	{
+		return 0;
+	}
+
+	map = obj->GetFields()->GetFields();
+
+	buffer = new	char[obj->GetFields()->GetBufferSize()];
+	size = obj->GetFields()->GetBufferSize();
+
+
+
+	size_t i = columns;
+	size_t indexLocation = 0;
+	size_t row = 0;
+
+	while (i < (rows + 1) * (columns))
+	{
+		if (i % (columns) == 0)
+		{
+
+
+			row = stoi(results[i]);
+			it = map.begin();
+			++i;
+			continue;
+		}
+		StringToBuffer(it->second, buffer, results[i]);
+
+		++i;
+		++it;
+		++indexLocation;
+		if (indexLocation >= (columns - 1))
+		{
+			char* mem = NULL;
+			mem = new char[obj->GetFields()->GetBufferSize()];
+			memcpy_s(mem, obj->GetFields()->GetBufferSize(), buffer, obj->GetFields()->GetBufferSize());
+			delete[obj->GetFields()->GetBufferSize()] buffer;
+			buffer = NULL;
+			buffer = new	char[obj->GetFields()->GetBufferSize()];
+			data[row] = (mem);
+
+
+			indexLocation = 0;
+
+
+
+		}
+
+	}
+
+
+	for (size_t i = 0; i < (rows + 1) * (columns); i++)
+	{
+		delete  results[i];
+		results[i] = NULL;
+	}
+
+	delete[obj->GetFields()->GetBufferSize()]  buffer;
+
+	buffer = NULL;
+	results = NULL;
+
+	return rc;
+}
+
 int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size,const Filter filter) {
 
 	int rows = 0, columns = 0;

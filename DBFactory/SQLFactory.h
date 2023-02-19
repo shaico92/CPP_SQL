@@ -16,8 +16,9 @@ extern "C++" SQLFACTORY_API class  SQLFactory
 	char* zErrMsg = 0;
 	std::map<std::string, SQLObject*> registered;
 	void StringToBuffer(SQLField* ptr, char* buffer, char* value);
-	int Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size,const Filter filter);
-	int Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size, const vector<Filter>& filters);
+	SQLFACTORY_API	 int Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size,const Filter filter);
+	 SQLFACTORY_API	 int Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size, const vector<Filter>& filters);
+	 SQLFACTORY_API	 int Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size);
 	void open();
 	void close();
 public:
@@ -26,14 +27,15 @@ public:
 	SQLFACTORY_API	void RegisterClass(SQLObject* sqlClass);
 	SQLFACTORY_API	int CreateTable(SQLObject* sqlClass);
 	
-	
+	template<class t>
+	    int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data);
 	template<class t>
 		int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter);
 	template<class t>
 		int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter> & filter);
 
 
-	SQLFACTORY_API		int InsertObject(const std::string& Query);
+	SQLFACTORY_API	int InsertObject(const std::string& Query);
 	SQLFACTORY_API	int InsertObject(const vector<std::string>& Queries);
 	SQLFACTORY_API	int DropTable(const SQLObject* obj);
 };
@@ -67,6 +69,34 @@ template<class t>
 
 	return rc;
 }
+ template<class t>
+ int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data) {
+	 ;
+
+	 unordered_map<size_t, char*>mems;
+	 unordered_map<size_t, char*>::iterator itMems;
+	 size_t Size = 0;
+	 int rc = 0; Execute(sqlClass, mems, Size);
+	 for (itMems = mems.begin(); itMems != mems.end(); itMems++)
+	 {
+		 t* obj = (t*)itMems->second;
+		 data[itMems->first] = *obj;
+
+
+		 delete[](itMems->second);
+
+
+		 itMems->second = NULL;
+
+	 }
+
+	 //in case of memory leak use this 
+	 //close();
+	 //open();
+	 mems.clear();
+
+	 return rc;
+ }
 template<class t>
  int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter>& filter) {
 	;

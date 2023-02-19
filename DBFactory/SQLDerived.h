@@ -15,6 +15,7 @@ class SQLDerived :
         this->addFieldDouble("age", ptr->age);
 
         this->addFieldString("the name", 23);
+
     }
 public:
     SQLDerived(std::string  name) :SQLObject(name) {

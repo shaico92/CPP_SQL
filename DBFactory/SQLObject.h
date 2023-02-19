@@ -9,6 +9,7 @@ SQLFACTORY_API class SQLObject
 	virtual void RegisterFields() = 0;
 protected:
 	SQLFACTORY_API void addFieldString(std::string fieldName, int size);
+	SQLFACTORY_API void addFieldWString(std::string fieldName, int size);
 	SQLFACTORY_API void addFieldWString(std::string fieldName, std::wstring obj);
 	SQLFACTORY_API void addFieldInt(std::string fieldName, int obj);
 	SQLFACTORY_API void addFieldDouble(std::string fieldName, double obj);
@@ -20,7 +21,7 @@ protected:
 	SQLFields* GetFields() { return this->sqlFields; }
 	SQLFields* sqlFields;
 public:
-	bool GetField(const char* fieldName, SQLField*& ptr);
+	SQLField* GetField(const char* fieldName);
 	 std::string GetName()const { return this->TableName; }
 
 	template<class t>

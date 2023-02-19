@@ -16,20 +16,21 @@ void SQLObject::addFieldString(std::string fieldName, int size) {
 	}
 	sqlFields->addFieldString(NameForSQL, size);
 }
-bool SQLObject::GetField(const char* fieldName,SQLField*& ptr) {
+SQLField* SQLObject::GetField(const char* fieldName) {
 	unordered_map<std::string, SQLField*>::iterator it=  this->GetFields()->fields.find(fieldName);
 
 	if (it!= this->GetFields()->fields.end())
 	{
-		ptr= it->second;
-		return true;
+		return it->second;
+
 	}
-	ptr= NULL;
-	return false;
+
+	return NULL;
 }
-void SQLObject::addFieldWString(std::string fieldName, std::wstring obj){
-	sqlFields->addFieldWString(fieldName, obj);
+void SQLObject::addFieldWString(std::string fieldName, int size) {
+	sqlFields->addFieldWString(fieldName, size);
 }
+
 void SQLObject::addFieldInt(std::string fieldName, int obj){
 	sqlFields->addFieldInt(fieldName, sizeof(int));
 }

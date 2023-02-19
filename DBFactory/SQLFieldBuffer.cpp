@@ -9,10 +9,17 @@ void SQLFields::addFieldString(std::string fieldName,int size) {
 	fields[fieldName] = new SQLField(FieldType::_string_, bufferSize, fieldName, size);
 	bufferSize += size;
 }
-void SQLFields::addFieldWString(std::string fieldName, std::wstring obj) {
-	fields[fieldName] = new SQLField(FieldType::_wstring_, bufferSize, fieldName, sizeof(obj));
-	bufferSize += sizeof(obj);
+void SQLFields::addFieldWString(std::string fieldName, int size) {
+
+	if (size > MAX_CHARACTERS)
+	{
+		size = MAX_CHARACTERS;
+	}
+
+	fields[fieldName] = new SQLField(FieldType::_wstring_, bufferSize, fieldName, size);
+	bufferSize += size;
 }
+
 void SQLFields::addFieldInt(std::string fieldName, int obj) {
 	fields[fieldName] = new SQLField(FieldType::_int_, bufferSize, fieldName, sizeof(obj));
 	bufferSize += sizeof(obj);
@@ -62,6 +69,14 @@ std::string SQLFields::BufferValue(const SQLField* ptr, char* data) {
 
 		return std::to_string(d);
 	}
+
+	case _wstring_:
+	{
+		
+
+	
+	}
+
 	case _string_:
 	{
 		char mem[MAX_CHARACTERS];

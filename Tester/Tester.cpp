@@ -15,9 +15,20 @@ int main()
     StructExample st;
     st.age = 223;
     st.id = 2;
-    
+    st.name[0] = 's';
+    st.name[1] = '2';
+    st.name[2] = '\0';
+
+    SQL_order_map<StructExample> data;
+    ;
+
+
+    factory_.GetTable(someTable,data);
     st.year = 1921;
+  
     factory_.InsertObject(someTable->Insert(st));
+
+ 
     std::cout << "Hello World!\n";
 }
 

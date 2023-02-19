@@ -19,7 +19,8 @@ private:
 	
 	
 	void addFieldString(std::string fieldName,int size);
-	void addFieldWString(std::string fieldName, std::wstring obj);
+	void addFieldWString(std::string fieldName, int size);
+	
 	void addFieldInt(std::string fieldName, int obj);
 	void addFieldDouble(std::string fieldName, double obj);
 	void addFieldFloat(std::string fieldName, float obj);
