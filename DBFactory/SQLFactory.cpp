@@ -69,6 +69,7 @@ void SQLFactory::RegisterClass(SQLObject* ptr) {
 }
 int SQLFactory::InsertObject(const std::string& Query) {
 	open();
+	
 	int rc=  sqlite3_exec(db, Query.c_str(), NULL, 0, &zErrMsg);
 
 	return rc;
@@ -80,6 +81,7 @@ int SQLFactory::InsertObject(const vector<std::string>& Queries) {
 	{
 		query.append(Queries.at(i));
 	}
+
 	int rc = sqlite3_exec(db, query.c_str(), NULL, 0, &zErrMsg);
 
 	return rc;

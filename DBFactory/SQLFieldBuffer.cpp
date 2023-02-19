@@ -81,6 +81,9 @@ std::string SQLFields::BufferValue(const SQLField* ptr, char* data) {
 	{
 		char mem[MAX_CHARACTERS];
 		mem[0] = '\"';
+
+		//iterate each letter
+
 		memcpy_s(&mem[1], ptr->size, data, ptr->size);
 		size_t i = 0;
 		while (mem[i]!='\0')
