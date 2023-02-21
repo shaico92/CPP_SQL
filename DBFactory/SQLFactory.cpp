@@ -70,6 +70,7 @@ void SQLFactory::RegisterClass(SQLObject* ptr) {
 int SQLFactory::InsertObject(const std::string& Query) {
 	open();
 	
+	
 	int rc=  sqlite3_exec(db, Query.c_str(), NULL, 0, &zErrMsg);
 
 	return rc;

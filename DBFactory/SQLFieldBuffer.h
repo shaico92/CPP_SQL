@@ -121,6 +121,7 @@ private:
 		Query.append(to_string(row));
 		Query.append(";");
 		return Query;
+
 	}
 SQLFACTORY_API static	std::string BufferValue(const SQLField* ptr, char* data);
 };

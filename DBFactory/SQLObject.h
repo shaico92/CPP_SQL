@@ -7,7 +7,9 @@ SQLFACTORY_API class SQLObject
 	friend class SQLFactory;
 	std::string TableName;
 	virtual void RegisterFields() = 0;
+
 protected:
+
 	SQLFACTORY_API void addFieldString(std::string fieldName, int size);
 	SQLFACTORY_API void addFieldWString(std::string fieldName, int size);
 	SQLFACTORY_API void addFieldWString(std::string fieldName, std::wstring obj);
@@ -63,4 +65,5 @@ public:
 
 
 };
+
 

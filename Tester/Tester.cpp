@@ -4,14 +4,24 @@
 #include <iostream>
 #include "SQLFactory.h"
 #include "SQLDerived.h"
+#include "Language.h"
 
 
-void castToUnicode(char ptr[], wstring data,char unicodePrefix);
-void castUnicodeToWide(char ptr[]);
+
 
 
 int main()
 {
+
+    
+
+
+
+    ;
+
+
+
+
 
     SQLFactory factory_("mashu");
 
@@ -23,66 +33,17 @@ int main()
     st.age = 223;
     st.year = 1945;
     st.id = 2;
-    st.name[0] = 's';
-    st.name[1] = '2';
-    st.name[2] = '\0';
-    castToUnicode(st.name, L"שי היה פה", -41);
-    int dataInt = -1;
-    
-
-
-    SQL_order_map<StructExample> data;
-    ;
-    //
+   
+    SQL_order_map<StructExample> data;  factory_.GetTable(someTable, data);
+    Language::castToUnicode(st.name, L"ئ ا ب ـ غ ک",23);
+  
     
     factory_.InsertObject(someTable->Insert(st));
-
-    factory_.GetTable(someTable,data);
-    st.year = 1921;
-    wchar_t df= L'א';
-    df = L'ת';
-
-    int f = 0x5d0;
-    f = 0x5ea;
-   
-
- 
-    std::cout << "Hello World!\n";
-}
-
-void castToUnicode(char ptr[], wstring data, char unicodePrefix) {
-    vector<int> letters;
-
-    for (size_t i = 0; i < data.size()&& letters .size()<MAX_CHARACTERS; i++)
-    {
-        int expression = -1 * (1600 - ((int)data.at(i)));
-        if (expression<-112)
-        {
-            letters.push_back((int)data.at(i));
-          
-        }
-        else {
-            letters.push_back((int)unicodePrefix);
-            letters.push_back(expression);
-        }
-       
-    }
-    letters.push_back(0);
   
-
-    char* dynamic = new char[letters.size()];
-    for (size_t i = 0; i < letters.size(); i++)
-    {
-        dynamic[i] = (char)letters.at(i);
-    }
-
-    memcpy_s(ptr, MAX_CHARACTERS, dynamic, MAX_CHARACTERS);
-    if (ptr[MAX_CHARACTERS - 1] < 0 && ptr[MAX_CHARACTERS - 1] == (int)unicodePrefix)
-    {
-        ptr[MAX_CHARACTERS - 1] = 0;
-    }
-    delete[] dynamic;
+    return 0;
 }
+
+
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu

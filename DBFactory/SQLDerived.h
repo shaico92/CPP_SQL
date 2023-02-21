@@ -16,6 +16,8 @@ class SQLDerived :
 
         this->addFieldString("the name", 23);
 
+     
+
     }
 public:
     SQLDerived(std::string  name) :SQLObject(name) {
