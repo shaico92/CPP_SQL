@@ -13,19 +13,7 @@
 int main(int argc, char** argv)
 {
 
-    StructExample2 temp2;
-    temp2.year = 6666;
-    StructExample2 empty1;
-    for (size_t i = 0; i < 14; i++)
-    {
-        temp2.someIds.push_back(i);
-    }
-    cout << sizeof(temp2) << endl;
-    const size_t sizeofT = sizeof(StructExample2);
-    char* data1 = new char[sizeofT];
-    memcpy_s(data1, sizeofT, &temp2, sizeofT);
-
-    memcpy_s(&empty1, sizeofT, data1, sizeofT);
+    
 
 
 
@@ -79,9 +67,9 @@ int main(int argc, char** argv)
     for (size_t i = 0; i < iterations; i++)
     {
         
-        st.age += i;
-        st.year += i;
-        st.id += i;
+        st.age *= (double)i;
+        st.year *= (int)i;
+        st.id *= (int)i;
         wstring word = L"שלום ";
         
         word.append(to_wstring(i));
@@ -95,7 +83,7 @@ int main(int argc, char** argv)
     //someTable->Update(data.find(5493));
    
     //status = factory_.InsertObject(someTable->Update(data.find(5493)));
-    status = factory_.InsertObject(someTable->Update(data[5493], 5493));
+  
     cout << "before " << endl;
     status = factory_.InsertObjectUnsafe(someTable->Insert(data2));
     cout << "Done: " << status << endl;

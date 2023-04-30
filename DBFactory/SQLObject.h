@@ -10,7 +10,7 @@
 	std::string TableName;
 	
 private:
-	map<std::string, SQLObject*>objects;
+	
 
 protected:
 	SQLFACTORY_API void setPrimary(std::string fieldName) {
@@ -30,7 +30,7 @@ protected:
 	SQLFACTORY_API virtual void RegisterFields() = 0;
 	SQLFields* GetFields() { return this->sqlFields; }
 
-	map<string,SQLObject*>& GetObjects() { return this->objects; }
+	
 	SQLFields* sqlFields;
 public:
 	

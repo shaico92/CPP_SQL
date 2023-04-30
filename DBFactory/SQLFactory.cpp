@@ -163,36 +163,9 @@ SQLFactory_status SQLFactory::CreateTable(SQLObject* ptr) {
 
 
 	int rc = sqlite3_exec(db, sqlCreate.c_str(), NULL, 0, &zErrMsg);
-	map<string, SQLObject*>::iterator itTable;
-	sqlCreate.clear();
-	for (itTable = ptr->GetObjects().begin(); itTable != ptr->GetObjects().end(); itTable++)
-	{
-		sqlCreate = "CREATE TABLE IF NOT EXISTS ";
-		sqlCreate.append(itTable->second->GetName());
-		sqlCreate.append(" (");
-		for (fieldsIt = fields.begin(); fieldsIt != fields.end(); fieldsIt++)
-		{
-			sqlCreate.append(fieldsIt->first);
-			sqlCreate.append(" ");
-			sqlCreate.append(fieldsIt->second->TypeToSql());
-			fieldsIt++;
-			if (fieldsIt == fields.end())
-			{
-				sqlCreate.append(", ");
-				sqlCreate.append(ptr->GetName());
-				sqlCreate.append(primary->fieldName);
-				sqlCreate.append(" INTEGER");
-				break;
-			}
-			else {
-				fieldsIt--;
-				sqlCreate.append(" , ");
-			}
+	
 
-		}
-	}
-	sqlCreate.append(" );");
-	rc = sqlite3_exec(db, sqlCreate.c_str(), NULL, 0, &zErrMsg);
+	
 	return (SQLFactory_status)rc;
 }
 

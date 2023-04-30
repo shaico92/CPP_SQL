@@ -7,7 +7,7 @@ struct StructExample
 	double age;
 
 	char name[23];
-	vector<int> someIds;
+
 	
 };
 struct StructExample2

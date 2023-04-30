@@ -37,7 +37,7 @@ private:
 		bufferSize += sizeof(obj);
 	}
 	template<class t>
-	string ToSQLInsert(t obj,string Table,typename vector< const SQLField*>& allComplexed) {
+	string ToSQLInsert(t obj,string Table) {
 		
 		std::unordered_map<std::string, SQLField*>::iterator it;
 		char* buff = new		char[bufferSize];
@@ -51,11 +51,7 @@ private:
 		for ( it = fields.begin(); it != fields.end(); it++)
 		{
 			//iterate each field except when its complex
-			if (it->second->type==_complex_)
-			{
-				allComplexed.push_back(it->second);
-				continue;
-			}
+		
 			Query.append(it->second->fieldName);
 		
 			
