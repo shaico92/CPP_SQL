@@ -9,7 +9,8 @@ enum FieldType {
 	_wstring_, 
 	_longlong_,    
 	_longDouble,  
-	_float_       
+	_float_,
+	_complex_
 
 
 };

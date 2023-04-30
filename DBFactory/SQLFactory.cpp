@@ -27,7 +27,7 @@ void SQLFactory::StringToBuffer(SQLField* ptr, char* buffer, char* value) {
 	switch (ptr->type)
 	{
 	case _int_: {
-		int d = stod(value);
+		int d = stoi(value);
 		memcpy_s(buffer + ptr->bufferOffeset, ptr->size, &d, ptr->size);
 
 		break;
@@ -67,15 +67,29 @@ void SQLFactory::RegisterClass(SQLObject* ptr) {
 	registered[ptr->GetName()] = ptr;
 
 }
-int SQLFactory::InsertObject(const std::string& Query) {
+SQLFactory_status SQLFactory::InsertObjectUnsafe(const vector<std::string>& Queries) {
+	open();
+	string query = "BEGIN TRANSACTION;";
+	for (size_t i = 0; i < Queries.size(); i++)
+	{
+		query.append(Queries.at(i));
+
+	}
+	query.append(" COMMIT;");
+	int rc = sqlite3_exec(db, query.c_str(), NULL, 0, &zErrMsg);
+
+	return (SQLFactory_status)rc;
+}
+SQLFactory_status SQLFactory::InsertObject(const std::string& Query) {
 	open();
 	
 	
 	int rc=  sqlite3_exec(db, Query.c_str(), NULL, 0, &zErrMsg);
 
-	return rc;
+	return (SQLFactory_status)rc;
 }
-int SQLFactory::InsertObject(const vector<std::string>& Queries) {
+
+SQLFactory_status SQLFactory::InsertObject(const vector<std::string>& Queries) {
 	open();
 	string query = "";
 	for (size_t i = 0; i < Queries.size(); i++)
@@ -85,14 +99,26 @@ int SQLFactory::InsertObject(const vector<std::string>& Queries) {
 
 	int rc = sqlite3_exec(db, query.c_str(), NULL, 0, &zErrMsg);
 
-	return rc;
+	return (SQLFactory_status)rc;
 }
 
-int SQLFactory::CreateTable(SQLObject* ptr) {
+SQLFactory_status SQLFactory::CreateTable(SQLObject* ptr) {
 	open();
 	std::unordered_map<std::string, SQLField*> fields= ptr->GetFields()->GetFields();
 	std::unordered_map<std::string, SQLField*>::iterator fieldsIt;
-	string sqlCreate = "CREATE TABLE IF NOT EXISTS "; //+GetName() + "(column_name datatype, column_name datatype);"
+	map<string, SQLObject*>::iterator it;;
+	string sqlCreate = "";
+	SQLField* primary = NULL;
+
+
+
+
+
+
+
+
+
+	 sqlCreate = "CREATE TABLE IF NOT EXISTS "; 
 	sqlCreate.append(ptr->GetName());
 	sqlCreate.append(" (");
 	for (fieldsIt = fields.begin(); fieldsIt != fields.end(); fieldsIt++)
@@ -100,7 +126,12 @@ int SQLFactory::CreateTable(SQLObject* ptr) {
 		sqlCreate.append(fieldsIt->first);
 		sqlCreate.append(" ");
 		sqlCreate.append(fieldsIt->second->TypeToSql());
+		if (fieldsIt->second->primary)
+		{
+			primary = fieldsIt->second;
+		}
 		fieldsIt++;
+	
 		if (fieldsIt == fields.end())
 		{
 			break;
@@ -111,25 +142,72 @@ int SQLFactory::CreateTable(SQLObject* ptr) {
 		}
 		
 	}
+	//inserting foreign keys according to objects
+	
+
+
 	sqlCreate.append(" );");
 
-	void* Stam;
+
+
+	
+
+
+
+	
+
+
+
+
+
+
+
 	int rc = sqlite3_exec(db, sqlCreate.c_str(), NULL, 0, &zErrMsg);
-	return rc;
+	map<string, SQLObject*>::iterator itTable;
+	sqlCreate.clear();
+	for (itTable = ptr->GetObjects().begin(); itTable != ptr->GetObjects().end(); itTable++)
+	{
+		sqlCreate = "CREATE TABLE IF NOT EXISTS ";
+		sqlCreate.append(itTable->second->GetName());
+		sqlCreate.append(" (");
+		for (fieldsIt = fields.begin(); fieldsIt != fields.end(); fieldsIt++)
+		{
+			sqlCreate.append(fieldsIt->first);
+			sqlCreate.append(" ");
+			sqlCreate.append(fieldsIt->second->TypeToSql());
+			fieldsIt++;
+			if (fieldsIt == fields.end())
+			{
+				sqlCreate.append(", ");
+				sqlCreate.append(ptr->GetName());
+				sqlCreate.append(primary->fieldName);
+				sqlCreate.append(" INTEGER");
+				break;
+			}
+			else {
+				fieldsIt--;
+				sqlCreate.append(" , ");
+			}
+
+		}
+	}
+	sqlCreate.append(" );");
+	rc = sqlite3_exec(db, sqlCreate.c_str(), NULL, 0, &zErrMsg);
+	return (SQLFactory_status)rc;
 }
 
 
-int SQLFactory::DropTable(const SQLObject* obj) {
+SQLFactory_status SQLFactory::DropTable(const SQLObject* obj) {
 	open();
 	string sql = "DROP TABLE ";
 	sql.append(obj->GetName());
 
-	return sqlite3_exec(db, sql.c_str(), NULL, 0, &zErrMsg);
+	return (SQLFactory_status)sqlite3_exec(db, sql.c_str(), NULL, 0, &zErrMsg);
 }
 
 
 
-int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size) 
+SQLFactory_status SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size)
 {
 
 	int rows = 0, columns = 0;
@@ -148,7 +226,7 @@ int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size
 	int rc = sqlite3_get_table(db, sql.c_str(), &results, &rows, &columns, &zErrMsg);
 	if (rows < 1 || rc != 0)
 	{
-		return 0;
+		return (SQLFactory_status)rc;
 	}
 
 	map = obj->GetFields()->GetFields();
@@ -209,10 +287,10 @@ int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size
 	buffer = NULL;
 	results = NULL;
 
-	return rc;
+	return (SQLFactory_status)rc;
 }
 
-int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size,const Filter filter) {
+SQLFactory_status SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size,const Filter filter) {
 
 	int rows = 0, columns = 0;
 	size_t rowIndex = 1;
@@ -232,7 +310,7 @@ int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_
 	int rc = sqlite3_get_table(db, sql.c_str(), &results, &rows, &columns, &zErrMsg);
 	if (rows < 1 || rc != 0)
 	{
-		return 0;
+		return (SQLFactory_status)rc;
 	}
 
 	map = obj->GetFields()->GetFields();
@@ -293,10 +371,10 @@ int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_
 	buffer = NULL;
 	results = NULL;
 
-	return rc;
+	return (SQLFactory_status)rc;
 }
 
-int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size, const vector<Filter>& filters) {
+SQLFactory_status SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size, const vector<Filter>& filters) {
 
 	int rows = 0, columns = 0;
 	size_t rowIndex = 1;
@@ -326,7 +404,7 @@ int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size
 	int rc = sqlite3_get_table(db, sql.c_str(), &results, &rows, &columns, &zErrMsg);
 	if (rows < 1 || rc != 0)
 	{
-		return 0;
+		return (SQLFactory_status)rc;
 	}
 
 	map = obj->GetFields()->GetFields();
@@ -387,6 +465,6 @@ int SQLFactory::Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size
 	buffer = NULL;
 	results = NULL;
 
-	return rc;
+	return (SQLFactory_status)rc;
 }
 

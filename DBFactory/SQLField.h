@@ -12,9 +12,11 @@ class SQLField
 	FieldType type;
 	int bufferOffeset;
 	int size;
+	bool primary;
 	std::string fieldName;
+	std::string tableName;
 	std::string TypeToSql()const;
-	SQLField(FieldType type, int bufferOffeset, std::string name, int size);
+	SQLField(FieldType type, int bufferOffeset, std::string name, int size,std::string tableName="");
 	
 	
 };

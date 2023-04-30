@@ -5,7 +5,8 @@
 
 
 
-SQLFACTORY_API class SQLFields
+
+ class SQLFields
 {
 
 	friend class SQLObject;
@@ -16,8 +17,11 @@ public:
 private:
 	unsigned int bufferSize;
 	unordered_map<std::string, SQLField*> fields;
+
 	
-	
+	void setPrimary(std::string fieldName) {
+		this->fields[fieldName]->primary = true;
+	}
 	void addFieldString(std::string fieldName,int size);
 	void addFieldWString(std::string fieldName, int size);
 	
@@ -27,9 +31,13 @@ private:
 	void addFieldlong(std::string fieldName, long obj);
 	void addFieldlonglong(std::string fieldName, long long obj);
 	void addFieldlongDouble(std::string fieldName, long double obj);
-	
 	template<class t>
-	string ToSQLInsert(t obj,string Table) {
+	void addFieldComplex(std::string fieldName, std::string tableName, typename vector<t> obj) {
+		fields[fieldName] = new SQLField(FieldType::_complex_, bufferSize, fieldName, sizeof(obj),tableName);
+		bufferSize += sizeof(obj);
+	}
+	template<class t>
+	string ToSQLInsert(t obj,string Table,typename vector< const SQLField*>& allComplexed) {
 		
 		std::unordered_map<std::string, SQLField*>::iterator it;
 		char* buff = new		char[bufferSize];
@@ -39,9 +47,15 @@ private:
 
 		Query.append(" (");
 		vector< string> values;
+		
 		for ( it = fields.begin(); it != fields.end(); it++)
 		{
-			//iterate each field
+			//iterate each field except when its complex
+			if (it->second->type==_complex_)
+			{
+				allComplexed.push_back(it->second);
+				continue;
+			}
 			Query.append(it->second->fieldName);
 		
 			
@@ -77,6 +91,12 @@ private:
 			}
 		}
 		Query.append(");");
+
+		//need to insert the list saved 
+
+
+
+
 		return Query;
 	}
 

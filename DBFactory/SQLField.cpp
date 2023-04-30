@@ -1,9 +1,11 @@
 #include "SQLField.h"
-SQLField::SQLField(FieldType type, int bufferOffeset, std::string name, int size) {
+SQLField::SQLField(FieldType type, int bufferOffeset, std::string name, int size,std::string tableName) {
 	this->type = type;
 	this->bufferOffeset = bufferOffeset;
 	this->fieldName = name;
 	this->size = size;
+	this->primary = false;
+	this->tableName = tableName;
 }
 string SQLField::TypeToSql() const{
 

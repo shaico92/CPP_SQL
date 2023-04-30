@@ -1,15 +1,21 @@
 #pragma once
 #include "SQLFieldBuffer.h"
+#include <unordered_map>
+#include <vector>
 
-SQLFACTORY_API class SQLObject
+ class SQLObject
 {
 	
 	friend class SQLFactory;
 	std::string TableName;
-	virtual void RegisterFields() = 0;
+	
+private:
+	map<std::string, SQLObject*>objects;
 
 protected:
-
+	SQLFACTORY_API void setPrimary(std::string fieldName) {
+		this->sqlFields->setPrimary(fieldName);
+	}
 	SQLFACTORY_API void addFieldString(std::string fieldName, int size);
 	SQLFACTORY_API void addFieldWString(std::string fieldName, int size);
 	SQLFACTORY_API void addFieldWString(std::string fieldName, std::wstring obj);
@@ -19,10 +25,15 @@ protected:
 	SQLFACTORY_API void addFieldlong(std::string fieldName, long obj);
 	SQLFACTORY_API void addFieldlonglong(std::string fieldName, long long obj);
 	SQLFACTORY_API void addFieldlongDouble(std::string fieldName, long double obj);
+	
 	SQLFACTORY_API SQLObject(std::string tableName);
+	SQLFACTORY_API virtual void RegisterFields() = 0;
 	SQLFields* GetFields() { return this->sqlFields; }
+
+	map<string,SQLObject*>& GetObjects() { return this->objects; }
 	SQLFields* sqlFields;
 public:
+	
 	SQLField* GetField(const char* fieldName);
 	 std::string GetName()const { return this->TableName; }
 
@@ -43,8 +54,9 @@ public:
 	string Update(t obj,size_t row) {
 		return	sqlFields->UpdateRow(this->TableName,row,obj);
 	}
+
 	template<class t>
-	vector<string> UpdateRange(vector<pair<size_t,t>> objects) {
+	vector<string> Update(vector<pair<size_t,t>> objects) {
 
 		
 		vector<string>queries;

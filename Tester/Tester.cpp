@@ -10,36 +10,105 @@
 
 
 
-int main()
+int main(int argc, char** argv)
 {
 
-    
+    StructExample2 temp2;
+    temp2.year = 6666;
+    StructExample2 empty1;
+    for (size_t i = 0; i < 14; i++)
+    {
+        temp2.someIds.push_back(i);
+    }
+    cout << sizeof(temp2) << endl;
+    const size_t sizeofT = sizeof(StructExample2);
+    char* data1 = new char[sizeofT];
+    memcpy_s(data1, sizeofT, &temp2, sizeofT);
+
+    memcpy_s(&empty1, sizeofT, data1, sizeofT);
 
 
 
-    ;
 
 
-
-
+    SQLFactory_status status;
 
     SQLFactory factory_("mashu");
 
     SQLDerived* someTable = new   SQLDerived("a table");
-    factory_.RegisterClass(someTable);
-    factory_.CreateTable(someTable);
-    StructExample st;
 
-    st.age = 223;
+
+    SQLDerived2* someTable2 = new   SQLDerived2("a table2");
+    factory_.RegisterClass(someTable2);
+
+    status = factory_.CreateTable(someTable2);
+    status = factory_.CreateTable(someTable);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    factory_.DropTable(someTable);
+    factory_.RegisterClass(someTable);
+    status = factory_.CreateTable(someTable);
+    int iterations = 10;
+    if (argc>1)
+    {
+        iterations = stoi(argv[1]);
+        cout << "Number of iterations is "<< iterations << endl;
+
+       
+    }
+
+  
+    StructExample st;
+    st.age = 2;
     st.year = 1945;
     st.id = 2;
+    SQL_order_map<StructExample> data;
+    vector<StructExample> data2;
+    for (size_t i = 0; i < iterations; i++)
+    {
+        
+        st.age += i;
+        st.year += i;
+        st.id += i;
+        wstring word = L"שלום ";
+        
+        word.append(to_wstring(i));
+        Language::castToUnicode(st.name, word, 23);
+        data2.push_back(st);
+    }
+    //5493
+    status = factory_.GetTable(someTable, data);
+    SQL_order_map<StructExample>::iterator dataIT;
+    Language::castToUnicode(data[5493].name, L"שלאלתאםפ", 23);
+    //someTable->Update(data.find(5493));
    
-    SQL_order_map<StructExample> data;  factory_.GetTable(someTable, data);
-    Language::castToUnicode(st.name, L"ئ ا ب ـ غ ک",23);
-  
-    
-    factory_.InsertObject(someTable->Insert(st));
-  
+    //status = factory_.InsertObject(someTable->Update(data.find(5493)));
+    status = factory_.InsertObject(someTable->Update(data[5493], 5493));
+    cout << "before " << endl;
+    status = factory_.InsertObjectUnsafe(someTable->Insert(data2));
+    cout << "Done: " << status << endl;
+    status = factory_.GetTable(someTable, data);
+    vector<pair<size_t, StructExample>>range;
+    range.push_back(make_pair(5493, data[5493]));
+    range.push_back(make_pair(1, data[1]));
+    range.push_back(make_pair(2, data[2]));
+    range.push_back(make_pair(3, data[3]));
+    range.push_back(make_pair(12, data[67]));
+
+    status = factory_.InsertObject(someTable->Update(range));
+
     return 0;
 }
 

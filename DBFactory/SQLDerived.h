@@ -9,7 +9,7 @@ class SQLDerived :
         StructExample* ptr = new     StructExample();
         
         this->addFieldInt("id", ptr->id);
-
+      
         this->addFieldInt("year", ptr->year);
 
         this->addFieldDouble("age", ptr->age);
@@ -22,6 +22,25 @@ class SQLDerived :
 public:
     SQLDerived(std::string  name) :SQLObject(name) {
  
+        RegisterFields();
+    }
+};
+
+class SQLDerived2 :
+    public SQLObject
+{
+
+    void RegisterFields() {
+        StructExample2* ptr = new     StructExample2();
+
+        this->addFieldInt("id", ptr->id);
+       
+        this->addFieldInt("year", ptr->year);
+       
+    }
+public:
+    SQLDerived2(std::string  name) :SQLObject(name) {
+     
         RegisterFields();
     }
 };

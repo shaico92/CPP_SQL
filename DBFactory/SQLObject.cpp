@@ -69,4 +69,5 @@ SQLObject::SQLObject(std::string tableName) {
 	{
 		this->sqlFields = new	SQLFields();
 	}
+	
 }

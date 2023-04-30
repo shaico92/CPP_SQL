@@ -5,8 +5,12 @@
 #include "Filter.h"
 
 
-
-extern "C++" SQLFACTORY_API class  SQLFactory
+enum SQLFactory_status
+{
+	SUCCESS,
+	ERROR
+};
+extern "C++"  class  SQLFactory
 {
 
 	
@@ -16,33 +20,33 @@ extern "C++" SQLFACTORY_API class  SQLFactory
 	char* zErrMsg = 0;
 	std::map<std::string, SQLObject*> registered;
 	void StringToBuffer(SQLField* ptr, char* buffer, char* value);
-	SQLFACTORY_API	 int Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size,const Filter filter);
-	 SQLFACTORY_API	 int Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size, const vector<Filter>& filters);
-	 SQLFACTORY_API	 int Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size);
+	SQLFACTORY_API	 SQLFactory_status Execute(SQLObject* obj, unordered_map<size_t, char*>& data,size_t& size,const Filter filter);
+	 SQLFACTORY_API	 SQLFactory_status Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size, const vector<Filter>& filters);
+	 SQLFACTORY_API	 SQLFactory_status Execute(SQLObject* obj, unordered_map<size_t, char*>& data, size_t& size);
 	void open();
 	void close();
 public:
 	SQLFACTORY_API SQLFactory(std::string dbpath);
 	SQLFACTORY_API	~SQLFactory();
 	SQLFACTORY_API	void RegisterClass(SQLObject* sqlClass);
-	SQLFACTORY_API	int CreateTable(SQLObject* sqlClass);
+	SQLFACTORY_API	SQLFactory_status CreateTable(SQLObject* sqlClass);
 	
 	template<class t>
-	    int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data);
+	SQLFactory_status GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data);
 	template<class t>
-		int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter);
+	SQLFactory_status GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter);
 	template<class t>
-		int GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter> & filter);
+	SQLFactory_status GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter> & filter);
 
-
-	SQLFACTORY_API	int InsertObject(const std::string& Query);
-	SQLFACTORY_API	int InsertObject(const vector<std::string>& Queries);
-	SQLFACTORY_API	int DropTable(const SQLObject* obj);
+	SQLFACTORY_API	SQLFactory_status InsertObjectUnsafe(const vector<std::string>& Queries);
+	SQLFACTORY_API	SQLFactory_status InsertObject(const std::string& Query);
+	SQLFACTORY_API	SQLFactory_status InsertObject(const vector<std::string>& Queries);
+	SQLFACTORY_API	SQLFactory_status DropTable(const SQLObject* obj);
 };
 
 //template implementation
 template<class t>
- int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter) {
+SQLFactory_status SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data,const Filter& filter) {
 	;
 	
 	unordered_map<size_t, char*>mems;
@@ -67,10 +71,10 @@ template<class t>
 	//open();
 	mems.clear();
 
-	return rc;
+	return (SQLFactory_status)rc;
 }
  template<class t>
- int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data) {
+ SQLFactory_status SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data) {
 	 ;
 
 	 unordered_map<size_t, char*>mems;
@@ -95,10 +99,10 @@ template<class t>
 	 //open();
 	 mems.clear();
 
-	 return rc;
+	 return (SQLFactory_status)rc;
  }
 template<class t>
- int SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter>& filter) {
+SQLFactory_status SQLFactory::GetTable(SQLObject* sqlClass, unordered_map<size_t, t>& data, const vector<Filter>& filter) {
 	;
 	
 	unordered_map<size_t, char*>mems;
@@ -123,6 +127,6 @@ template<class t>
 	//open();
 	mems.clear();
 
-	return rc;
+	return (SQLFactory_status)rc;
 }
 
